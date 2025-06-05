@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { Image, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
 import useGrammarCorrection from "../hooks/useGrammaerCorrection";
+import { useThemeStore } from "../store/useThemeStore";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -11,6 +12,7 @@ const MessageInput = () => {
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
   const { corrected, loading } = useGrammarCorrection(text);
+  const {theme}=useThemeStore()
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -53,6 +55,10 @@ const MessageInput = () => {
     }
   };
 
+  useEffect(()=>{
+    console.log(theme)
+  },theme)
+
 
   return (
     <div className="p-4 w-full relative">
@@ -77,8 +83,8 @@ const MessageInput = () => {
 
       {/* Floating Suggestion */}
       {corrected && !suggestionApplied && (
-        <div className="absolute -top-10 left-10 z-10 bg-base-200 px-3 py-1 rounded-md shadow text-sm text-zinc-400">
-          ✨ Suggested: <strong className="text-white">{corrected}</strong>{" "}
+        <div className={`absolute -top-10 left-10 z-10 bg-base-200 px-3 py-1 rounded-md shadow text-sm ${theme==="light"?"text-black":" text-zinc-400"}`}>
+          ✨ Suggested: <strong className={`${theme==="light"?"text-black":" text-zinc-400"}`}>{corrected}</strong>{" "}
           <button
             type="button"
             className="underline ml-2 text-blue-400"

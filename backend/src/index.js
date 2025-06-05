@@ -33,7 +33,10 @@ if( process.env.NODE_ENV==="production"){
 }
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
-
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: "Internal Server Error" });
+});
 
 server.listen(PORT,()=>{
     console.log("Server is running on port "+PORT)

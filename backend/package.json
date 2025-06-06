@@ -22,7 +22,7 @@
     "gramchat": "file:..",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.2",
-    "path-to-regexp": "^6.2.1",
+   
     "projects": "file:..",
     "socket.io": "^4.8.1"
   },

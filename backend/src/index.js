@@ -66,7 +66,7 @@ app.use("/api/grammar-check", grammarRoutes);
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(_dirname, "../frontend/build")));
 
-  app.get("*", (req, res) => {
+  app.get("*any", (req, res) => {
     res.sendFile(path.join(_dirname, "../frontend", "build", "index.html"));
   });
 }

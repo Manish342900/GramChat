@@ -3,7 +3,7 @@ import { axiosInstance } from "../lib/axios"
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL= process.env.NODE_ENV==="development"?"http://localhost:5001":"/"
+const BASE_URL = process.env.NODE_ENV === "development" ? "http://localhost:5001" : "/"
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,
@@ -61,10 +61,11 @@ export const useAuthStore = create((set, get) => ({
 
     logout: async () => {
         try {
-            const res = axiosInstance.post("/auth/logout")
+            const res = await axiosInstance.post("/auth/logout")
             set({ authUser: null })
-            toast.success("Logged out successfully")
             get.disconnectSocket()
+
+            toast.success("Logged out successfully")
         } catch (error) {
             toast.error(error.message)
         }
@@ -93,17 +94,17 @@ export const useAuthStore = create((set, get) => ({
             withCredentials: true,
             transports: ["websocket"],
             autoConnect: true,
-            query:{userId:authUser._id}
+            query: { userId: authUser._id }
         });
 
-       socket.connect() 
-       set({socket});
-       socket.on("getOnlineUsers" ,(usersIds)=>{
-        set({onlineUsers:usersIds})
-       })
+        socket.connect()
+        set({ socket });
+        socket.on("getOnlineUsers", (usersIds) => {
+            set({ onlineUsers: usersIds })
+        })
     },
     disconnectSocket: () => {
-        if(get().socket?.connected) get().socket.disconnect();
+        if (get().socket?.connected) get().socket.disconnect();
     }
 
 

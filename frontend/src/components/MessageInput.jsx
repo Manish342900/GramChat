@@ -11,8 +11,8 @@ const MessageInput = () => {
   const [suggestionApplied, setSuggestionApplied] = useState(false);
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
-  const { corrected, loading } = useGrammarCorrection(text);
-  const {theme}=useThemeStore()
+  const { corrected, loading, checkGrammar, clearCorrection } = useGrammarCorrection();
+  const { theme } = useThemeStore();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -55,11 +55,6 @@ const MessageInput = () => {
     }
   };
 
-  useEffect(()=>{
-    console.log(theme)
-  },theme)
-
-
   return (
     <div className="p-4 w-full relative">
       {imagePreview && (
@@ -81,29 +76,55 @@ const MessageInput = () => {
         </div>
       )}
 
-      {/* Floating Suggestion */}
-      {corrected && !suggestionApplied && (
-        <div className={`absolute -top-10 left-10 z-10 bg-base-200 px-3 py-1 rounded-md shadow text-sm ${theme==="light"?"text-black":" text-zinc-400"}`}>
-          ✨ Suggested: <strong className={`${theme==="light"?"text-black":" text-zinc-400"}`}>{corrected}</strong>{" "}
+      {(corrected || loading) && !suggestionApplied && (
+        <div
+          className={`absolute bottom-full mb-2 left-0 z-20 bg-base-200 px-3 py-1 rounded-md shadow text-sm flex items-center gap-2
+            ${theme === "light" ? "text-black" : "text-zinc-400"}
+          `}
+          style={{ minWidth: "220px" }}
+        >
+          {loading ? (
+            <span>Loading...</span>
+          ) : (
+            <>
+              <span className="flex-1">
+                Suggested: <strong>{corrected}</strong>
+              </span>
+              <button
+                type="button"
+                className="underline text-blue-400"
+                onClick={() => {
+                  const match = corrected.match(/"([^"]+)"/);
+                  const extracted = match ? match[1] : corrected;
+                  setText(extracted);
+                  setSuggestionApplied(true);
+
+                }}
+              >
+                Apply
+              </button>
+            </>
+          )}
           <button
             type="button"
-            className="underline ml-2 text-blue-400"
-            onClick={() => {
-              const match = corrected.match(/"([^"]+)"/);
-              const extracted = match ? match[1] : corrected;
-              setText(extracted);
-              setSuggestionApplied(true);
-            }}
+            aria-label="Close suggestion"
+            onClick={() => setSuggestionApplied(true)}
+            className="ml-2 text-zinc-500 hover:text-zinc-700"
           >
-            Apply
+            &#10005;
           </button>
-
         </div>
-      )
-      }
+      )}
 
       <form onSubmit={handleSendMessage} className="flex items-center gap-2">
         <div className="flex-1 flex gap-2">
+          <button
+            type="button"
+            onClick={() => checkGrammar(text)}
+            disabled={!text.trim() || loading}
+          >
+            ✨
+          </button>
           <input
             type="text"
             className="w-full input input-bordered rounded-lg input-sm sm:input-md"
@@ -112,6 +133,7 @@ const MessageInput = () => {
             onChange={(e) => {
               setText(e.target.value);
               setSuggestionApplied(false);
+              clearCorrection();
             }}
           />
           <input
@@ -139,7 +161,7 @@ const MessageInput = () => {
           <Send size={22} />
         </button>
       </form>
-    </div >
+    </div>
   );
 };
 

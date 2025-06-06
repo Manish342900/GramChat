@@ -6,6 +6,8 @@ import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
+import { CiUser } from "react-icons/ci";
+
 
 const ChatContainer = () => {
   const {
@@ -15,13 +17,15 @@ const ChatContainer = () => {
     selectedUser,
     subscribeToMessages,
     unsubscribeFromMessages,
+    setSelectedUser,
   } = useChatStore();
+
   const { authUser, socket } = useAuthStore();
   const messageEndRef = useRef(null);
 
   useEffect(() => {
     getMessages(selectedUser._id);
-    subscribeToMessages()
+    subscribeToMessages();
     return () => unsubscribeFromMessages();
   }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
 
@@ -32,11 +36,22 @@ const ChatContainer = () => {
   }, [messages]);
 
   useEffect(() => {
-    console.log(socket)
-  }, [socket])
+    console.log(socket);
+  }, [socket]);
+
   if (isMessagesLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-auto">
+        {/* Mobile back button */}
+        <div className="md:hidden p-2 border-b">
+          <button
+            className="text-sm text-blue-600"
+            onClick={() => setSelectedUser(null)}
+          >
+            ← Back
+          </button>
+        </div>
+
         <ChatHeader />
         <MessageSkeleton />
         <MessageInput />
@@ -44,11 +59,11 @@ const ChatContainer = () => {
     );
   }
 
-
-
-
   return (
     <div className="flex-1 flex flex-col overflow-auto">
+
+
+
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -58,18 +73,30 @@ const ChatContainer = () => {
             className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
             ref={messageEndRef}
           >
-            <div className=" chat-image avatar">
-              <div className="size-10 rounded-full border">
-                <img
-                  src={
-                    message.senderId === authUser._id
-                      ? authUser.profilePic || "/avatar.png"
-                      : selectedUser.profilePic || "/avatar.png"
-                  }
-                  alt="profile pic"
-                />
-              </div>
+            <div className="chat-image avatar">
+              {(
+                message.senderId === authUser._id
+                  ? authUser.profilePic
+                  : selectedUser.profilePic
+              ) ? (
+                <div className="size-10 rounded-full border overflow-hidden">
+                  <img
+                    src={
+                      message.senderId === authUser._id
+                        ? authUser.profilePic
+                        : selectedUser.profilePic
+                    }
+                    alt="profile pic"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              ) : (
+                <CiUser className="text-3xl text-gray-500" />
+              )}
             </div>
+
+
+
             <div className="chat-header mb-1">
               <time className="text-xs opacity-50 ml-1">
                 {formatMessageTime(message.createdAt)}
@@ -93,4 +120,5 @@ const ChatContainer = () => {
     </div>
   );
 };
+
 export default ChatContainer;

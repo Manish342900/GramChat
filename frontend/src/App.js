@@ -10,6 +10,7 @@ import Profile from './pages/Profile';
 import { useAuthStore } from './store/useAuthStore';
 import { useEffect } from 'react';
 import { useThemeStore } from './store/useThemeStore';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const { checkAuth, authUser, onlineUsers } = useAuthStore()
@@ -37,6 +38,10 @@ function App() {
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/" />} />
 
       </Routes>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
     </div>
   );
 }

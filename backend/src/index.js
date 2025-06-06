@@ -78,12 +78,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal Server Error" });
 });
 
-app._router.stack
-  .filter(r => r.route)
-  .forEach(r => {
-    const method = Object.keys(r.route.methods)[0].toUpperCase();
-    console.log(`Route: ${method} ${r.route.path}`);
-  });
+
 
 server.listen(PORT, () => {
     console.log("Server is running on port " + PORT);

@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
         messages: [
           {
             role: "user",
-            content: `Correct the grammar: ${text}`,
+            content: `Correct the grammar of this sentence: "${text}". Only return the corrected sentence. If the sentence is already correct or meaningless, return nothing.`,
           },
         ],
         temperature: 0,

@@ -8,7 +8,6 @@ import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 import { CiUser } from "react-icons/ci";
 
-
 const ChatContainer = () => {
   const {
     messages,
@@ -20,29 +19,27 @@ const ChatContainer = () => {
     setSelectedUser,
   } = useChatStore();
 
-  const { authUser, socket } = useAuthStore();
+  const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
   useEffect(() => {
-    getMessages(selectedUser._id);
-    subscribeToMessages();
+    if (selectedUser?._id) {
+      getMessages(selectedUser._id);
+      subscribeToMessages();
+    }
+
     return () => unsubscribeFromMessages();
-  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+  }, [selectedUser?._id]);
 
   useEffect(() => {
-    if (messageEndRef.current && messages) {
+    if (messageEndRef.current && messages?.length > 0) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
-  useEffect(() => {
-    console.log(socket);
-  }, [socket]);
-
   if (isMessagesLoading) {
     return (
-      <div className="flex-1 flex flex-col overflow-auto">
-        {/* Mobile back button */}
+      <div className="flex flex-col h-full">
         <div className="md:hidden p-2 border-b">
           <button
             className="text-sm text-blue-600"
@@ -51,34 +48,37 @@ const ChatContainer = () => {
             ← Back
           </button>
         </div>
-
         <ChatHeader />
-        <MessageSkeleton />
+        <div className="flex-1 overflow-y-auto">
+          <MessageSkeleton />
+        </div>
         <MessageInput />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto">
-
-
+    <div className="flex flex-col h-full">
+      <div className="md:hidden p-2 border-b">
+        <button
+          className="text-sm text-blue-600"
+          onClick={() => setSelectedUser(null)}
+        >
+          ← Back
+        </button>
+      </div>
 
       <ChatHeader />
 
+      {/* 🧠 Make sure this container can scroll */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages?.map((message, index) => (
           <div
             key={message._id + index}
             className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
-            ref={messageEndRef}
           >
             <div className="chat-image avatar">
-              {(
-                message.senderId === authUser._id
-                  ? authUser.profilePic
-                  : selectedUser.profilePic
-              ) ? (
+              {(message.senderId === authUser._id ? authUser.profilePic : selectedUser.profilePic) ? (
                 <div className="size-10 rounded-full border overflow-hidden">
                   <img
                     src={
@@ -95,13 +95,12 @@ const ChatContainer = () => {
               )}
             </div>
 
-
-
             <div className="chat-header mb-1">
               <time className="text-xs opacity-50 ml-1">
                 {formatMessageTime(message.createdAt)}
               </time>
             </div>
+
             <div className="chat-bubble flex flex-col">
               {message.image && (
                 <img
@@ -114,6 +113,7 @@ const ChatContainer = () => {
             </div>
           </div>
         ))}
+        <div ref={messageEndRef} />
       </div>
 
       <MessageInput />

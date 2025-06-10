@@ -35,6 +35,7 @@ const MessageInput = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
+    e.stopPropogation()
     const finalText = (suggestionApplied ? corrected : text).trim();
 
     if (!finalText && !imagePreview) return;

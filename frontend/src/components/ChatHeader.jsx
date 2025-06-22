@@ -1,6 +1,8 @@
 import { X } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
+import { CiUser } from "react-icons/ci";
+
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
@@ -10,18 +12,28 @@ const ChatHeader = () => {
     <div className="p-2.5 border-b border-base-300">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-           <div className="md:hidden p-4  rounded-full">
-        <button
-          className="text-sm text-balck-600"
-          onClick={() => setSelectedUser(null)}
-        >
-          ← 
-        </button>
-      </div>
+          <div className="md:hidden p-4  rounded-full">
+            <button
+              className="text-sm text-balck-600"
+              onClick={() => setSelectedUser(null)}
+            >
+              ←
+            </button>
+          </div>
           {/* Avatar */}
           <div className="avatar">
             <div className="size-10 rounded-full relative">
-              <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName} />
+              {
+                selectedUser?.profilePic ? (
+                  <img
+                    src={selectedUser.profilePic || "/avatar.png"}
+                    alt={selectedUser.fullName}
+                    className="rounded-full" />
+                ) : (
+                  <CiUser className="size-6 text-base-content/70" aria-label="User Avatar" title="User Avatar" />
+                )
+              }
+
             </div>
           </div>
 

@@ -13,6 +13,7 @@ const MessageInput = () => {
   const { sendMessage } = useChatStore();
   const { corrected, loading, checkGrammar, clearCorrection } = useGrammarCorrection();
   const { theme } = useThemeStore();
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -34,8 +35,9 @@ const MessageInput = () => {
   };
 
   const handleSendMessage = async (e) => {
+    setSendingMessage(true);
     e.preventDefault();
-    e.stopPropogation()
+     e.stopPropagation();
     const finalText = (suggestionApplied ? corrected : text).trim();
 
     if (!finalText && !imagePreview) return;
@@ -53,6 +55,8 @@ const MessageInput = () => {
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error("Failed to send message:", error);
+    }finally{
+      setSendingMessage(false);
     }
   };
 
@@ -156,10 +160,15 @@ const MessageInput = () => {
         </div>
         <button
           type="submit"
+         
           className="btn btn-sm btn-circle"
           disabled={!text.trim() && !imagePreview}
         >
-          <Send size={22} />
+          {sendingMessage ? (
+            <span className="loading loading-spinner"></span>
+          ) : (
+            <Send size={22} />
+          )}
         </button>
       </form>
     </div>

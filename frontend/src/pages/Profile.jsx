@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
 import imageCompression from 'browser-image-compression'
@@ -6,6 +6,13 @@ import imageCompression from 'browser-image-compression'
 const Profile = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
+
+
+  useEffect(() => {
+    console.log("authUser", authUser);
+
+  }, [])
+
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];

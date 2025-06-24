@@ -52,7 +52,7 @@ const _dirname = path.resolve();
 app.use(express.json({ limit: '5mb' }));
 app.use(cookieParser());
 app.use(cors({
-  origin: "https://gram-chat.vercel.app/",
+  origin: "https://gram-chat.vercel.app",
   credentials: true,
 }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));

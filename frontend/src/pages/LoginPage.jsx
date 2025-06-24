@@ -71,6 +71,7 @@ const LoginPage = () => {
                   placeholder="••••••••"
                   value={formData.password}
                   required
+                  minLength={6}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
                 <button

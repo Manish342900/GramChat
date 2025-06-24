@@ -37,7 +37,7 @@ const MessageInput = () => {
   const handleSendMessage = async (e) => {
     setSendingMessage(true);
     e.preventDefault();
-     e.stopPropagation();
+    e.stopPropagation();
     const finalText = (suggestionApplied ? corrected : text).trim();
 
     if (!finalText && !imagePreview) return;
@@ -48,14 +48,14 @@ const MessageInput = () => {
         image: imagePreview,
       });
 
-      // Clear form
+
       setText("");
       setImagePreview(null);
       setSuggestionApplied(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error("Failed to send message:", error);
-    }finally{
+    } finally {
       setSendingMessage(false);
     }
   };
@@ -92,9 +92,12 @@ const MessageInput = () => {
             <span>Loading...</span>
           ) : (
             <>
-              <span className="flex-1">
-                Suggested: <strong>{corrected}</strong>
-              </span>
+              {
+                !suggestionApplied && <span className="flex-1">
+                  Suggested: <strong>{corrected}</strong>
+                </span>
+              }
+
               <button
                 type="button"
                 className="underline text-blue-400"
@@ -160,7 +163,7 @@ const MessageInput = () => {
         </div>
         <button
           type="submit"
-         
+
           className="btn btn-sm btn-circle"
           disabled={!text.trim() && !imagePreview}
         >

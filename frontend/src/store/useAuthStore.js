@@ -3,7 +3,7 @@ import { axiosInstance } from "../lib/axios"
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL = process.env.NODE_ENV === "development" ? "http://localhost:5001" : "/"
+const BASE_URL = process.env.NODE_ENV === "development" ? "http://localhost:5001" : "https://gramchat-2.onrender.com"
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,

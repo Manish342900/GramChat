@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import useGrammarCorrection from "../hooks/useGrammaerCorrection";
 import { useThemeStore } from "../store/useThemeStore";
 
-const MessageInput = () => {
+const MessageInput = ({ replyingTo, onCancelReply }) => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [suggestionApplied, setSuggestionApplied] = useState(false);
@@ -46,13 +46,14 @@ const MessageInput = () => {
       await sendMessage({
         text: finalText,
         image: imagePreview,
+        replyTo: replyingTo ? replyingTo._id : null,
       });
-
 
       setText("");
       setImagePreview(null);
       setSuggestionApplied(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+      if (onCancelReply) onCancelReply();
     } catch (error) {
       console.error("Failed to send message:", error);
     } finally {
@@ -62,6 +63,16 @@ const MessageInput = () => {
 
   return (
     <div className="p-4 w-full relative">
+      {replyingTo && (
+        <div className="mb-2 p-2 bg-base-200 rounded flex items-center justify-between">
+          <div>
+            <span className="text-xs text-zinc-500">Replying to:</span>
+            <div className="text-sm font-semibold">{replyingTo.text || 'Image'}</div>
+          </div>
+          <button onClick={onCancelReply} className="ml-2 text-zinc-500 hover:text-zinc-700">&#10005;</button>
+        </div>
+      )}
+
       {imagePreview && (
         <div className="mb-3 flex items-center gap-2">
           <div className="relative">
